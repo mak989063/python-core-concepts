@@ -1,8 +1,8 @@
-n =int(input("Enter a number: "))
+N = int(input())
 sum = 0
-while(n > 0):
-    rem = n % 10
+while N>0:
+    rem = N % 10
     sum = sum + rem
-    n = n // 10
-print(sum)
+    N //= 10
 
+print(sum)

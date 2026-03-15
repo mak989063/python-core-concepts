@@ -1,6 +1,8 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
+import matplotlib
+matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 from sklearn.linear_model import LinearRegression
 
@@ -83,7 +85,7 @@ sales = np.array([9200, 9800, 10100, 8900, 9400, 9700, 9600])
 model = LinearRegression()
 model.fit(days, sales)
 
-future = np.array([[8], [9], [10], [11], [12]])
+future = pd.DataFrame({"day":[8,9,10,11,12]})
 
 prediction = model.predict(future)
 
@@ -162,3 +164,91 @@ ax4.set_ylabel("Profit")
 ax4.set_title("Orders vs Profit Simulation")
 
 st.pyplot(fig4)
+
+#BillDataImport
+st.subheader("Billit Data Import")
+
+uploaded_file = st.file_uploader("Upload Billit Sales CSV")
+
+if uploaded_file:
+
+    billit_df = pd.read_csv(uploaded_file)
+
+    st.write("Raw Billit Data")
+    st.dataframe(billit_df)
+
+    # Example assumption
+    if "amount" in billit_df.columns:
+
+        total_sales = billit_df["amount"].sum()
+
+        total_orders = len(billit_df)
+
+        avg_order = total_sales / total_orders
+
+        st.write("Total Sales ₹", total_sales)
+
+        st.write("Total Orders", total_orders)
+
+        st.write("Average Order Value ₹", round(avg_order))
+
+
+#Menu Price Optimizer
+st.subheader("Menu Price Optimizer")
+
+target_margin = st.slider("Target Profit Margin %",20,80,40)
+
+df["Recommended_price"] = df["Cost"] / (1 - target_margin/100)
+
+df["Recommended_price"] = df["Recommended_price"].round()
+
+optimizer_df = df[["Item","Cost","Price","Recommended_price"]]
+
+st.dataframe(optimizer_df)
+
+fig5, ax5 = plt.subplots()
+
+ax5.bar(optimizer_df["Item"], optimizer_df["Recommended_price"])
+
+ax5.set_title("Recommended Menu Price")
+
+st.pyplot(fig5)
+
+#Customer Demand Prediction
+st.subheader("Customer Demand Prediction")
+
+demand_data = {
+    "day":[1,2,3,4,5,6,7],
+    "porotta":[120,130,140,110,125,135,150],
+    "chicken":[35,40,38,30,33,36,41],
+    "beef":[45,48,50,42,44,46,52]
+}
+
+demand_df = pd.DataFrame(demand_data)
+
+st.dataframe(demand_df)
+
+# Training input
+X = demand_df[["day"]]
+
+# Future days to predict
+future_days = pd.DataFrame({"day":[8,9,10]})
+
+for item in ["porotta","chicken","beef"]:
+
+    y = demand_df[item]
+
+    model = LinearRegression()
+
+    model.fit(X, y)
+
+    prediction = model.predict(future_days)
+
+    pred_df = pd.DataFrame({
+        "Day":[8,9,10],
+        "Predicted Demand":prediction.round()
+    })
+
+    st.write(item.upper(),"Demand Forecast")
+
+    st.dataframe(pred_df)

@@ -1,0 +1,5 @@
+[INFO] 2025-08-08 12:01:03 GET /index.html 200 OK
+[WARNING] 2025-08-08 12:01:10 GET /not-found 404 Not Found
+[ERROR] 2025-08-08 12:01:15 GET /server-error 500 Internal Server Error
+[INFO] 2025-08-08 12:01:20 GET /health 200 OK
+[DEBUG] 2005-08-08 12:01:20 Something unrelated to HTTP
